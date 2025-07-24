@@ -1,0 +1,20 @@
+{
+    "items": [
+        {
+            "name": "Big Mac Meal",
+            "type": "combos",
+            "size": null,
+            "quantity": 1,
+            "modifiers": [],
+            "children": null
+        },
+        {
+            "name": "Coca-Cola",
+            "type": "drinks",
+            "size": "small",
+            "quantity": 1,
+            "modifiers": ["Ice"],
+            "children": null
+        }
+    ]
+}

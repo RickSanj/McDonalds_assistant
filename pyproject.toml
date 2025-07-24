@@ -1,0 +1,26 @@
+[project]
+name = "mcdonalds-proj"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Anna",email = "annamonastyrska.05@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.12,<4.0"
+dependencies = [
+    "pytest (>=8.4.1,<9.0.0)",
+    "docker (>=7.1.0,<8.0.0)",
+    "pydantic (>=2.11.7,<3.0.0)",
+    "openai (>=1.97.0,<2.0.0)",
+    "instructor (>=1.10.0,<2.0.0)",
+    "pyyaml (>=6.0.2,<7.0.0)",
+    "dotenv (>=0.9.9,<0.10.0)"
+]
+
+[tool.poetry]
+packages = [{include = "mcdonalds_proj", from = "src"}]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
