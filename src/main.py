@@ -43,6 +43,18 @@ def main():
             errors = manager.validate(order)
             if errors:
                 print(errors)
+            while manager.issue_queue.empty() is False:
+                manager_msg = manager.issue_queue.get()
+                print(manager_msg.text)
+
+                user_msg = input("User: ")
+
+                llm_response = llm.process(user_msg, manager_msg, order)
+
+                manager.update_order(order, llm_response)
+                errors = manager.validate(order)
+                if errors:
+                    print(errors)
 
             manager.apply_business_rules(order)
 

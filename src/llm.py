@@ -1,5 +1,5 @@
 from order import OrderState
-from menu import get_menu
+from menu import get_general_menu, get_clarify_menu
 from openai import OpenAI
 from manager import ManagerMessage
 from order import Order
@@ -17,22 +17,27 @@ class LLM:
             return self.process_dessert_offered(user_msg, manager_msg, order)
         if manager_msg.flag == "general":
             return self.process_general_question(user_msg, manager_msg, order)
+        if manager_msg.flag == "clarify":
+            return self.process_clarify_question(user_msg, manager_msg, order)
 
     def process_general_question(self, user_msg: str, manager_msg: ManagerMessage, order: Order) -> OrderState:
         system_prompt = f"""
         You are an AI assistant responsible for taking food orders at McDonald's. 
-        Your task is to extract the customer's intent from natural language input and convert it into structured data representing their order.
+        Your task is to extract the customer's intent from natural language input\
+        and convert it into structured data representing their order.
 
         Guidelines:
-        - A combo meal can include one drink and one fries item.
+        - A combo meal includes one burger, one drink and one fries item.\
+        A side is "French Fries" by default, unless the user specifies otherwise.\
+        If the user ordered a combo, try to assign any separately mentioned drinks\
+        or fries into the combo, when appropriate.
         - Customers may refer to specific menu items or just general types (e.g., "a burger" vs. "Big Mac").
         - If the customer says they don't want anything else, mark `order_finished` as True and do not modify the existing order.
-        - If the user ordered a combo, try to assign any separately mentioned drinks or fries into the combo, when appropriate.
 
         Context:
         - Current order state: {order.list}
         - Assistant's message: {manager_msg.text}
-        - Menu: {get_menu()}
+        - Menu: {get_general_menu()}
         """
 
         response = self.client.chat.completions.create(
@@ -57,7 +62,7 @@ class LLM:
         Context:
         - Current order state: {order.list}
         - Assistant's message: {manager_msg.text}
-        - Menu: {get_menu()}
+        - Menu: {get_general_menu()}
         """
 
         response = self.client.chat.completions.create(
@@ -74,8 +79,31 @@ class LLM:
         )
         return response
 
-    def specify_item(self, system_msg: str, user_msg: str) -> str:
-        return "To implement"
+    def process_clarify_question(self, user_msg: str, manager_msg: ManagerMessage, order: Order) -> OrderState:
+        system_prompt = f"""
+        You are an AI assistant taking food orders at McDonald's.
+        Your task is to respond to clarification questions from the customer in a way that helps them complete their order,
+        while also updating the structured order data if new details are revealed.
 
-    def specify_item_size(self, system_msg: str, user_msg: str) -> str:
-        return "To implement"
+        Guidelines:
+        - If the customer's message includes additional information about their order, update the order accordingly.
+        - If it's only a clarification without changes to the order, maintain the current state.
+        - Clarifications may involve menu details, portion sizes, combo details, or ingredient specifics.
+        - Usually sizes are small, medium and large
+
+        Context:
+        - Current order state: {order.list}
+        - System message to clarify: {manager_msg.text}
+        - Menu: {get_clarify_menu()}
+        """
+
+        response = self.client.chat.completions.create(
+            model=self.model,
+            max_retries=self.max_retries,
+            messages=[
+                {'role': 'developer', 'content': system_prompt},
+                {"role": "user", "content": user_msg}
+            ],
+            response_model=OrderState
+        )
+        return response
