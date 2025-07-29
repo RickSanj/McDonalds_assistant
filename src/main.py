@@ -1,11 +1,10 @@
-from manager import Manager
-from order import Order
-from llm import LLM
+from mcdonalds_proj.manager import Manager
+from mcdonalds_proj.order import Order
+from mcdonalds_proj.menu import Menu
+from mcdonalds_proj.llm import LLM
+
 from dotenv import load_dotenv
 from datetime import datetime
-
-import logging
-import json
 
 
 def main():
@@ -22,12 +21,11 @@ def main():
     # logger.critical("Internet is down")
 
     load_dotenv()
-
+    menu = Menu()
     manager = Manager()
     llm = LLM()
-    order = Order()
+    order = Order(menu)
 
-    # print("Test3", flush=True)
     manager.start_taking_order()
 
     while order.finished is False:
@@ -38,11 +36,21 @@ def main():
             user_msg = input("User: ")
 
             llm_response = llm.process(user_msg, manager_msg, order)
+            print(llm_response)
+            print("LLM print:")
+            for i in llm_response.items:
+                print('---- ', i.name, i.type, i.size,
+                      i.quantity, i.modifiers_to_add, i.modifiers_to_remove)
+                if i.children:
+                    for j in i.children:
+                        print('-------- ', j.name, j.type,
+                              j.size, j.quantity, j.modifiers_to_add, j.modifiers_to_remove)
 
             manager.update_order(order, llm_response)
-            errors = manager.validate(order)
-            if errors:
-                print(errors)
+            manager.validate(order, menu)
+            print(manager.get_errors())
+            print(order.summary())
+
             while manager.issue_queue.empty() is False:
                 manager_msg = manager.issue_queue.get()
                 print(manager_msg.text)
@@ -51,10 +59,19 @@ def main():
 
                 llm_response = llm.process(user_msg, manager_msg, order)
 
+                print("LLM print:")
+                for i in llm_response.items:
+                    print('---- ', i.name, i.type, i.size,
+                        i.quantity, i.modifiers_to_add, i.modifiers_to_remove)
+                    if i.children:
+                        for j in i.children:
+                            print('-------- ', j.name, j.type,
+                                j.size, j.quantity, j.modifiers_to_add, j.modifiers_to_remove)
+
                 manager.update_order(order, llm_response)
-                errors = manager.validate(order)
-                if errors:
-                    print(errors)
+                manager.validate(order, menu)
+                print(manager.get_errors())
+                print(order.summary())
 
             manager.apply_business_rules(order)
 

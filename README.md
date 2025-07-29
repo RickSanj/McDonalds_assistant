@@ -1,9 +1,15 @@
 To-do list:
 
-- json format of llm output and order list state
-- how to set flag finished to the order state
+- parse menu 
 - validate state of the order
-- act based on the task_queue after validation
+- testing 
 
 - async
 - REST API 
+
+if it doesn't pass the validation, the system should ask the user to specify the order again, and discard the LLM output.
+
+run:
+poetry run python src/main.py
+
+poetry run python -m unittest discover -s tests

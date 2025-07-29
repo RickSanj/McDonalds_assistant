@@ -2,301 +2,162 @@
     "combos": [
         {
             "name": "Big Mac Meal",
-            "category": "burgers",
             "price": 7.99,
-            "slots": {
-                "fries": ["French Fries", "Potato Dips"],
-                "drinks": [
-                    "Coca-Cola",
-                    "Fanta",
-                    "Sprite",
-                    "Coffee",
-                    "Tea",
-                    "Apple Juice"
-                ]
-            }
-        },
-        {
-            "name": "Cheeseburger Meal",
-            "category": "burgers",
-            "price": 5.49,
-            "slots": {
-                "fries": ["French Fries", "Potato Dips"],
-                "drinks": [
-                    "Coca-Cola",
-                    "Fanta",
-                    "Sprite",
-                    "Coffee",
-                    "Tea",
-                    "Apple Juice"
-                ]
-            }
-        },
-        {
-            "name": "Double Cheeseburger Meal",
-            "category": "burgers",
-            "price": 8.49,
-            "slots": {
-                "fries": ["French Fries", "Potato Dips"],
-                "drinks": [
-                    "Coca-Cola",
-                    "Fanta",
-                    "Sprite",
-                    "Coffee",
-                    "Tea",
-                    "Apple Juice"
-                ]
-            }
-        },
-        {
-            "name": "Filet-O-Fish Meal",
-            "category": "burgers",
-            "price": 7.19,
-            "slots": {
-                "fries": ["French Fries", "Potato Dips"],
-                "drinks": [
-                    "Coca-Cola",
-                    "Fanta",
-                    "Sprite",
-                    "Coffee",
-                    "Tea",
-                    "Apple Juice"
-                ]
-            }
-        },
-        {
-            "name": "McChicken Meal",
-            "category": "burgers",
-            "price": 6.79,
-            "slots": {
-                "fries": ["French Fries", "Potato Dips"],
-                "drinks": [
-                    "Coca-Cola",
-                    "Fanta",
-                    "Sprite",
-                    "Coffee",
-                    "Tea",
-                    "Apple Juice"
-                ]
-            }
-        },
-        {
-            "name": "combo",
-            "virtual": true,
-            "possible_items": [
-                "Big Mac Meal",
-                "Cheeseburger Meal",
-                "Double Cheeseburger Meal",
-                "Filet-O-Fish Meal",
-                "McChicken Meal"
-            ]
-        }
-    ],
-    "items": [
-        {
-            "name": "drink",
-            "virtual": true,
-            "possible_items": [
+            "fries": ["French Fries", "Potato Dips"],
+            "drinks": [
                 "Coca-Cola",
                 "Fanta",
                 "Sprite",
                 "Coffee",
                 "Tea",
-                "Apple Juice",
-                "Milk"
+                "Apple Juice"
             ]
         },
         {
-            "name": "burger",
-            "virtual": true,
-            "possible_items": [
-                "Big Mac",
-                "Cheeseburger",
-                "Hamburger",
-                "Filet-O-Fish",
-                "McChicken",
-                "Double Cheeseburger",
-                "Royal Cheeseburger",
-                "Big Tasty"
+            "name": "Cheeseburger Meal",
+            "price": 5.49,
+            "fries": ["French Fries", "Potato Dips"],
+            "drinks": [
+                "Coca-Cola",
+                "Fanta",
+                "Sprite",
+                "Coffee",
+                "Tea",
+                "Apple Juice"
             ]
         },
         {
-            "name": "dessert",
-            "virtual": true,
-            "possible_items": [
-                "McFlurry with M&M's",
-                "McFlurry with Oreo",
-                "Vanilla Cone",
-                "Chocolate Chip Cookie",
-                "Apple Pie"
+            "name": "Double Cheeseburger Meal",
+            "price": 8.49,
+            "fries": ["French Fries", "Potato Dips"],
+            "drinks": [
+                "Coca-Cola",
+                "Fanta",
+                "Sprite",
+                "Coffee",
+                "Tea",
+                "Apple Juice"
             ]
         },
         {
-            "name": "ice cream",
-            "virtual": true,
-            "possible_items": [
-                "McFlurry with M&M's",
-                "McFlurry with Oreo",
-                "Vanilla Cone"
+            "name": "Filet-O-Fish Meal",
+            "price": 7.19,
+            "fries": ["French Fries", "Potato Dips"],
+            "drinks": [
+                "Coca-Cola",
+                "Fanta",
+                "Sprite",
+                "Coffee",
+                "Tea",
+                "Apple Juice"
             ]
         },
         {
-            "name": "Big Mac",
-            "category": "burgers",
-            "price": 5.99
-        },
-        {
-            "name": "Cheeseburger",
-            "category": "burgers",
-            "price": 2.49
-        },
-        {
-            "name": "Hamburger",
-            "category": "burgers",
-            "price": 2.09
-        },
-        {
-            "name": "Filet-O-Fish",
-            "category": "burgers",
-            "price": 4.19
-        },
-        {
-            "name": "McChicken",
-            "category": "burgers",
-            "price": 3.79
-        },
-        {
-            "name": "Double Cheeseburger",
-            "category": "burgers",
-            "price": 3.79
-        },
-        {
-            "name": "Royal Cheeseburger",
-            "category": "burgers",
-            "price": 6.49
-        },
-        {
-            "name": "Big Tasty",
-            "category": "burgers",
-            "price": 6.99
-        },
+            "name": "McChicken Meal",
+            "price": 6.79,
+            "fries": ["French Fries", "Potato Dips"],
+            "drinks": [
+                "Coca-Cola",
+                "Fanta",
+                "Sprite",
+                "Coffee",
+                "Tea",
+                "Apple Juice"
+            ]
+        }
+    ],
+
+    "burgers": [
+        { "name": "Big Mac", "price": 5.99 },
+        { "name": "Cheeseburger", "price": 2.49 },
+        { "name": "Hamburger", "price": 2.09 },
+        { "name": "Filet-O-Fish", "price": 4.19 },
+        { "name": "McChicken", "price": 3.79 },
+        { "name": "Double Cheeseburger", "price": 3.79 },
+        { "name": "Royal Cheeseburger", "price": 6.49 },
+        { "name": "Big Tasty", "price": 6.99 }
+    ],
+
+    "fries": [
         {
             "name": "French Fries",
-            "category": "fries",
             "price": 1.99,
-            "properties": [
-                {
-                    "name": "size",
-                    "values": ["small", "medium", "large"]
-                }
-            ]
+            "size": ["small", "medium", "large"]
         },
         {
             "name": "Potato Dips",
-            "category": "fries",
             "price": 2.19,
-            "properties": [
-                {
-                    "name": "size",
-                    "values": ["small", "medium", "large"]
-                }
-            ]
-        },
+            "size": ["small", "medium", "large"]
+        }
+    ],
+
+    "drinks": [
         {
             "name": "Coca-Cola",
-            "category": "drinks",
             "price": 1.29,
-            "properties": [
-                {
-                    "name": "size",
-                    "values": ["small", "medium", "large"]
-                }
-            ]
+            "size": ["small", "medium", "large"]
         },
         {
             "name": "Fanta",
-            "category": "drinks",
             "price": 1.29,
-            "properties": [
-                {
-                    "name": "size",
-                    "values": ["small", "medium", "large"]
-                }
-            ]
+            "size": ["small", "medium", "large"]
         },
         {
             "name": "Sprite",
-            "category": "drinks",
             "price": 1.29,
-            "properties": [
-                {
-                    "name": "size",
-                    "values": ["small", "medium", "large"]
-                }
-            ]
+            "size": ["small", "medium", "large"]
         },
         {
             "name": "Coffee",
-            "category": "drinks",
             "price": 1.09,
-            "properties": [
-                {
-                    "name": "size",
-                    "values": ["small", "medium", "large"]
-                }
-            ]
+            "size": ["small", "medium", "large"]
         },
         {
             "name": "Tea",
-            "category": "drinks",
             "price": 1.09,
-            "properties": [
-                {
-                    "name": "size",
-                    "values": ["small", "medium", "large"]
-                }
-            ]
+            "size": ["small", "medium", "large"]
         },
         {
             "name": "Apple Juice",
-            "category": "drinks",
             "price": 1.49,
-            "properties": [
-                {
-                    "name": "size",
-                    "values": ["small", "medium"]
-                }
-            ]
+            "size": ["small", "medium"]
         },
         {
             "name": "Milk",
-            "category": "drinks",
-            "price": 1.29
-        },
-        {
-            "name": "McFlurry with M&M's",
-            "category": "desserts",
-            "price": 2.09
-        },
-        {
-            "name": "McFlurry with Oreo",
-            "category": "desserts",
-            "price": 2.09
-        },
-        {
-            "name": "Vanilla Cone",
-            "category": "desserts",
-            "price": 0.79
-        },
-        {
-            "name": "Chocolate Chip Cookie",
-            "category": "desserts",
-            "price": 1.09
-        },
-        {
-            "name": "Apple Pie",
-            "category": "desserts",
             "price": 1.29
         }
-    ]
+    ],
+
+    "desserts": [
+        { "name": "McFlurry with M&M's", "price": 2.09 },
+        { "name": "McFlurry with Oreo", "price": 2.09 },
+        { "name": "Vanilla Cone", "price": 0.79 },
+        { "name": "Chocolate Chip Cookie", "price": 1.09 },
+        { "name": "Apple Pie", "price": 1.29 }
+    ],
+
+    "deals": [
+        {
+            "name": "Small Double Deal",
+            "price": null,
+            "possible_items": [
+                "Hamburger",
+                "Cheeseburger",
+                "McChicken",
+                "Filet-O-Fish"
+            ]
+        },
+        {
+            "name": "Big Double Deal",
+            "price": null,
+            "possible_items": [
+                "Double Cheeseburger",
+                "Big Mac",
+                "Royal Cheeseburger",
+                "Big Tasty"
+            ]
+        }
+    ],
+
+    "ingredients": []
 }
