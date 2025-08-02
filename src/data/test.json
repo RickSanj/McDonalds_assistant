@@ -1,9 +1,55 @@
 {
-    "combos": [
-        {
-            "name": "Big Mac Meal",
-            "price": 7.99,
-            "fries": ["French Fries", "Potato Dips"],
+    "virtual": {
+        "combos": [
+            "Big Mac Meal",
+            "Cheeseburger Meal",
+            "Double Cheeseburger Meal",
+            "Filet-O-Fish Meal",
+            "McChicken Meal"
+        ],
+        "drink": [
+            "Coca-Cola",
+            "Fanta",
+            "Sprite",
+            "Coffee",
+            "Tea",
+            "Apple Juice",
+            "Milk"
+        ],
+        "burger": [
+            "Big Mac",
+            "Cheeseburger",
+            "Hamburger",
+            "Filet-O-Fish",
+            "McChicken",
+            "Double Cheeseburger",
+            "Royal Cheeseburger",
+            "Big Tasty"
+        ],
+        "dessert": [
+            "McFlurry with M&M's",
+            "McFlurry with Oreo",
+            "Vanilla Cone",
+            "Chocolate Chip Cookie",
+            "Apple Pie"
+        ],
+        "ice cream": [
+            "McFlurry with M&M's",
+            "McFlurry with Oreo",
+            "Vanilla Cone"
+        ]
+    },
+    "combos": {
+        "Big Mac Meal": {
+            "size_price": {
+                "small": 5.99,
+                "medium": 7.99,
+                "large": 9.99
+            },
+            "fries": [
+                "French Fries",
+                "Potato Dips"
+            ],
             "drinks": [
                 "Coca-Cola",
                 "Fanta",
@@ -11,12 +57,26 @@
                 "Coffee",
                 "Tea",
                 "Apple Juice"
+            ],
+            "sauces": [
+                "Ketchup",
+                "BBQ Sauce",
+                "Sweet & Sour Sauce",
+                "Honey Mustard",
+                "Ranch",
+                "Buffalo Sauce"
             ]
         },
-        {
-            "name": "Cheeseburger Meal",
-            "price": 5.49,
-            "fries": ["French Fries", "Potato Dips"],
+        "Cheeseburger Meal": {
+            "size_price": {
+                "small": 4.12,
+                "medium": 5.49,
+                "large": 6.86
+            },
+            "fries": [
+                "French Fries",
+                "Potato Dips"
+            ],
             "drinks": [
                 "Coca-Cola",
                 "Fanta",
@@ -24,12 +84,26 @@
                 "Coffee",
                 "Tea",
                 "Apple Juice"
+            ],
+            "sauces": [
+                "Ketchup",
+                "BBQ Sauce",
+                "Sweet & Sour Sauce",
+                "Honey Mustard",
+                "Ranch",
+                "Buffalo Sauce"
             ]
         },
-        {
-            "name": "Double Cheeseburger Meal",
-            "price": 8.49,
-            "fries": ["French Fries", "Potato Dips"],
+        "Double Cheeseburger Meal": {
+            "size_price": {
+                "small": 6.37,
+                "medium": 8.49,
+                "large": 10.61
+            },
+            "fries": [
+                "French Fries",
+                "Potato Dips"
+            ],
             "drinks": [
                 "Coca-Cola",
                 "Fanta",
@@ -37,12 +111,26 @@
                 "Coffee",
                 "Tea",
                 "Apple Juice"
+            ],
+            "sauces": [
+                "Ketchup",
+                "BBQ Sauce",
+                "Sweet & Sour Sauce",
+                "Honey Mustard",
+                "Ranch",
+                "Buffalo Sauce"
             ]
         },
-        {
-            "name": "Filet-O-Fish Meal",
-            "price": 7.19,
-            "fries": ["French Fries", "Potato Dips"],
+        "Filet-O-Fish Meal": {
+            "size_price": {
+                "small": 5.39,
+                "medium": 7.19,
+                "large": 8.99
+            },
+            "fries": [
+                "French Fries",
+                "Potato Dips"
+            ],
             "drinks": [
                 "Coca-Cola",
                 "Fanta",
@@ -50,12 +138,26 @@
                 "Coffee",
                 "Tea",
                 "Apple Juice"
+            ],
+            "sauces": [
+                "Ketchup",
+                "BBQ Sauce",
+                "Sweet & Sour Sauce",
+                "Honey Mustard",
+                "Ranch",
+                "Buffalo Sauce"
             ]
         },
-        {
-            "name": "McChicken Meal",
-            "price": 6.79,
-            "fries": ["French Fries", "Potato Dips"],
+        "McChicken Meal": {
+            "size_price": {
+                "small": 5.09,
+                "medium": 6.79,
+                "large": 8.49
+            },
+            "fries": [
+                "French Fries",
+                "Potato Dips"
+            ],
             "drinks": [
                 "Coca-Cola",
                 "Fanta",
@@ -63,101 +165,393 @@
                 "Coffee",
                 "Tea",
                 "Apple Juice"
+            ],
+            "sauces": [
+                "Ketchup",
+                "BBQ Sauce",
+                "Sweet & Sour Sauce",
+                "Honey Mustard",
+                "Ranch",
+                "Buffalo Sauce"
             ]
         }
-    ],
-
-    "burgers": [
-        { "name": "Big Mac", "price": 5.99 },
-        { "name": "Cheeseburger", "price": 2.49 },
-        { "name": "Hamburger", "price": 2.09 },
-        { "name": "Filet-O-Fish", "price": 4.19 },
-        { "name": "McChicken", "price": 3.79 },
-        { "name": "Double Cheeseburger", "price": 3.79 },
-        { "name": "Royal Cheeseburger", "price": 6.49 },
-        { "name": "Big Tasty", "price": 6.99 }
-    ],
-
-    "fries": [
-        {
-            "name": "French Fries",
-            "price": 1.99,
-            "size": ["small", "medium", "large"]
+    },
+    "drinks": {
+        "Coca-Cola": {
+            "size_price": {
+                "small": 0.97,
+                "medium": 1.29,
+                "large": 1.61
+            },
+            "default_ingredients": [
+                "Ice"
+            ],
+            "possible_ingredients": [
+                "Ice"
+            ]
         },
-        {
-            "name": "Potato Dips",
-            "price": 2.19,
-            "size": ["small", "medium", "large"]
+        "Fanta": {
+            "size_price": {
+                "small": 0.97,
+                "medium": 1.29,
+                "large": 1.61
+            },
+            "default_ingredients": [
+                "Ice"
+            ],
+            "possible_ingredients": [
+                "Ice"
+            ]
+        },
+        "Sprite": {
+            "size_price": {
+                "small": 0.97,
+                "medium": 1.29,
+                "large": 1.61
+            },
+            "default_ingredients": [
+                "Ice"
+            ],
+            "possible_ingredients": [
+                "Ice"
+            ]
+        },
+        "Coffee": {
+            "size_price": {
+                "small": 0.82,
+                "medium": 1.09,
+                "large": 1.36
+            },
+            "default_ingredients": [],
+            "possible_ingredients": []
+        },
+        "Tea": {
+            "size_price": {
+                "small": 0.82,
+                "medium": 1.09,
+                "large": 1.36
+            },
+            "default_ingredients": [],
+            "possible_ingredients": []
+        },
+        "Apple Juice": {
+            "size_price": {
+                "small": 1.12,
+                "medium": 1.49
+            },
+            "default_ingredients": [],
+            "possible_ingredients": []
+        },
+        "Milk": {
+            "size_price": {
+                "default": 1.29
+            },
+            "default_ingredients": [],
+            "possible_ingredients": []
         }
-    ],
-
-    "drinks": [
-        {
-            "name": "Coca-Cola",
-            "price": 1.29,
-            "size": ["small", "medium", "large"]
+    },
+    "burgers": {
+        "Big Mac": {
+            "price": 5.99,
+            "default_ingredients": [
+                "Double Beef Patty",
+                "Cheese Slice",
+                "Lettuce",
+                "Onion",
+                "Pickles",
+                "Big Mac Sauce",
+                "Sesame Seed Bun"
+            ],
+            "possible_ingredients": [
+                "Double Beef Patty",
+                "Cheese Slice",
+                "Double Cheese",
+                "Lettuce",
+                "Onion",
+                "Pickles",
+                "Tomato",
+                "Bacon",
+                "Big Mac Sauce",
+                "Ketchup",
+                "Mustard",
+                "Mayo",
+                "Sesame Seed Bun"
+            ]
         },
-        {
-            "name": "Fanta",
-            "price": 1.29,
-            "size": ["small", "medium", "large"]
+        "Cheeseburger": {
+            "price": 2.49,
+            "default_ingredients": [
+                "Beef Patty",
+                "Cheese Slice",
+                "Onion",
+                "Pickles",
+                "Ketchup",
+                "Mustard",
+                "Regular Bun"
+            ],
+            "possible_ingredients": [
+                "Beef Patty",
+                "Double Beef Patty",
+                "Cheese Slice",
+                "Double Cheese",
+                "Lettuce",
+                "Onion",
+                "Pickles",
+                "Tomato",
+                "Bacon",
+                "Ketchup",
+                "Mustard",
+                "Mayo",
+                "Regular Bun"
+            ]
         },
-        {
-            "name": "Sprite",
-            "price": 1.29,
-            "size": ["small", "medium", "large"]
+        "Hamburger": {
+            "price": 2.09,
+            "default_ingredients": [
+                "Beef Patty",
+                "Onion",
+                "Pickles",
+                "Ketchup",
+                "Mustard",
+                "Regular Bun"
+            ],
+            "possible_ingredients": [
+                "Beef Patty",
+                "Double Beef Patty",
+                "Cheese Slice",
+                "Double Cheese",
+                "Lettuce",
+                "Onion",
+                "Pickles",
+                "Tomato",
+                "Bacon",
+                "Ketchup",
+                "Mustard",
+                "Mayo",
+                "Regular Bun"
+            ]
         },
-        {
-            "name": "Coffee",
+        "Filet-O-Fish": {
+            "price": 4.19,
+            "default_ingredients": [
+                "Fish Patty",
+                "Cheese Slice",
+                "Tartar Sauce",
+                "Steamed Bun"
+            ],
+            "possible_ingredients": [
+                "Fish Patty",
+                "Cheese Slice",
+                "Double Cheese",
+                "Lettuce",
+                "Onion",
+                "Pickles",
+                "Tartar Sauce",
+                "Mayo",
+                "Steamed Bun"
+            ]
+        },
+        "McChicken": {
+            "price": 3.79,
+            "default_ingredients": [
+                "Chicken Patty",
+                "Lettuce",
+                "Mayo",
+                "Regular Bun"
+            ],
+            "possible_ingredients": [
+                "Chicken Patty",
+                "Cheese Slice",
+                "Double Cheese",
+                "Lettuce",
+                "Onion",
+                "Pickles",
+                "Tomato",
+                "Bacon",
+                "Mayo",
+                "Ketchup",
+                "Mustard",
+                "Regular Bun"
+            ]
+        },
+        "Double Cheeseburger": {
+            "price": 3.79,
+            "default_ingredients": [
+                "Double Beef Patty",
+                "Double Cheese",
+                "Onion",
+                "Pickles",
+                "Ketchup",
+                "Mustard",
+                "Regular Bun"
+            ],
+            "possible_ingredients": [
+                "Double Beef Patty",
+                "Double Cheese",
+                "Lettuce",
+                "Onion",
+                "Pickles",
+                "Tomato",
+                "Bacon",
+                "Ketchup",
+                "Mustard",
+                "Mayo",
+                "Regular Bun"
+            ]
+        },
+        "Royal Cheeseburger": {
+            "price": 6.49,
+            "default_ingredients": [
+                "Beef Patty",
+                "Cheese Slice",
+                "Lettuce",
+                "Onion",
+                "Pickles",
+                "Tomato",
+                "Ketchup",
+                "Mayo",
+                "Sesame Seed Bun"
+            ],
+            "possible_ingredients": [
+                "Beef Patty",
+                "Double Beef Patty",
+                "Cheese Slice",
+                "Double Cheese",
+                "Lettuce",
+                "Onion",
+                "Pickles",
+                "Tomato",
+                "Bacon",
+                "Ketchup",
+                "Mustard",
+                "Mayo",
+                "Sesame Seed Bun"
+            ]
+        },
+        "Big Tasty": {
+            "price": 6.99,
+            "default_ingredients": [
+                "Beef Patty",
+                "Cheese Slice",
+                "Lettuce",
+                "Onion",
+                "Tomato",
+                "Mayo",
+                "Sesame Seed Bun"
+            ],
+            "possible_ingredients": [
+                "Beef Patty",
+                "Double Beef Patty",
+                "Cheese Slice",
+                "Double Cheese",
+                "Lettuce",
+                "Onion",
+                "Pickles",
+                "Tomato",
+                "Bacon",
+                "Mayo",
+                "Ketchup",
+                "Mustard",
+                "Sesame Seed Bun"
+            ]
+        }
+    },
+    "fries": {
+        "French Fries": {
+            "size_price": {
+                "small": 1.49,
+                "medium": 1.99,
+                "large": 2.49
+            },
+            "default_ingredients": [],
+            "possible_ingredients": [
+                "Ketchup",
+                "Mayo"
+            ]
+        },
+        "Potato Dips": {
+            "size_price": {
+                "small": 1.64,
+                "medium": 2.19,
+                "large": 2.74
+            },
+            "default_ingredients": [],
+            "possible_ingredients": [
+                "Ketchup",
+                "Mayo"
+            ]
+        }
+    },
+    "desserts": {
+        "McFlurry with M&M's": {
+            "price": 2.09,
+            "default_ingredients": [],
+            "possible_ingredients": []
+        },
+        "McFlurry with Oreo": {
+            "price": 2.09,
+            "default_ingredients": [],
+            "possible_ingredients": []
+        },
+        "Vanilla Cone": {
+            "price": 0.79,
+            "default_ingredients": [],
+            "possible_ingredients": []
+        },
+        "Chocolate Chip Cookie": {
             "price": 1.09,
-            "size": ["small", "medium", "large"]
+            "default_ingredients": [],
+            "possible_ingredients": []
         },
-        {
-            "name": "Tea",
-            "price": 1.09,
-            "size": ["small", "medium", "large"]
-        },
-        {
-            "name": "Apple Juice",
-            "price": 1.49,
-            "size": ["small", "medium"]
-        },
-        {
-            "name": "Milk",
-            "price": 1.29
+        "Apple Pie": {
+            "price": 1.29,
+            "default_ingredients": [],
+            "possible_ingredients": []
         }
-    ],
-
-    "desserts": [
-        { "name": "McFlurry with M&M's", "price": 2.09 },
-        { "name": "McFlurry with Oreo", "price": 2.09 },
-        { "name": "Vanilla Cone", "price": 0.79 },
-        { "name": "Chocolate Chip Cookie", "price": 1.09 },
-        { "name": "Apple Pie", "price": 1.29 }
-    ],
-
-    "deals": [
-        {
-            "name": "Small Double Deal",
-            "price": null,
-            "possible_items": [
-                "Hamburger",
-                "Cheeseburger",
-                "McChicken",
-                "Filet-O-Fish"
-            ]
-        },
-        {
-            "name": "Big Double Deal",
-            "price": null,
-            "possible_items": [
-                "Double Cheeseburger",
-                "Big Mac",
-                "Royal Cheeseburger",
-                "Big Tasty"
-            ]
-        }
-    ],
-
-    "ingredients": []
+    },
+    "deals": {
+        "Small Double Deal": [
+            "Hamburger",
+            "Cheeseburger",
+            "McChicken",
+            "Filet-O-Fish"
+        ],
+        "Big Double Deal": [
+            "Double Cheeseburger",
+            "Big Mac",
+            "Royal Cheeseburger",
+            "Big Tasty"
+        ]
+    },
+    "sauces": {
+        "Ketchup": 0.25,
+        "BBQ Sauce": 0.35,
+        "Sweet & Sour Sauce": 0.35,
+        "Honey Mustard": 0.35,
+        "Ranch": 0.35,
+        "Buffalo Sauce": 0.35
+    },
+    "ingredients": {
+        "Beef Patty": 1.5,
+        "Double Beef Patty": 2.75,
+        "Chicken Patty": 1.25,
+        "Fish Patty": 1.4,
+        "Cheese Slice": 0.5,
+        "Double Cheese": 0.85,
+        "Vanilla Ice Cream": 0.6,
+        "Lettuce": 0.25,
+        "Onion": 0.2,
+        "Pickles": 0.2,
+        "Tomato": 0.3,
+        "Bacon": 0.75,
+        "Big Mac Sauce": 0.15,
+        "Ketchup": 0.1,
+        "Mustard": 0.1,
+        "Mayo": 0.15,
+        "Tartar Sauce": 0.2,
+        "Sesame Seed Bun": 0.4,
+        "Regular Bun": 0.35,
+        "Steamed Bun": 0.4,
+        "Ice": 0.0
+    }
 }

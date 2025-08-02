@@ -1,9 +1,10 @@
 import json
-from mcdonalds_proj.order import Order, OrderItem, ChildrenItem
+from mcdonalds_proj.order import Order, OrderItem, ChildrenItem, IngredientsItem
 from queue import Queue
 from mcdonalds_proj.menu import Menu
 
-
+# todo ice creams
+# todo business logic
 
 
 class ManagerMessage():
@@ -49,6 +50,16 @@ class Manager:
             "System: Would you like something for dessert?", "dessert_offered")
         self.message_queue.put(msg)
 
+    def offer_sause(self, item: OrderItem):
+        msg = ManagerMessage(
+            f"System: Would you like a sause for your {item.name}?", "general")
+        self.message_queue.put(msg)
+
+    def offer_to_turn_into_combo(self, item: OrderItem):
+        msg = ManagerMessage(
+            f"System: Would you like to turn your {item.name} into a combo {item.name} Meal?", "general")
+        self.message_queue.put(msg)
+
     def update_order(self, order, llm_response):
         order.issue_queue = Queue()
         order.list = llm_response.items
@@ -60,6 +71,13 @@ class Manager:
         if order.list == []:
             self.errors.append("The order cannot be empty.")
             self.last_call()
+        for item in order.list:
+            if item.type == 'combos' and not item.modifiers_to_add:
+                self.offer_sause(item)
+            if item.type == 'burgers' and item.name not in ["Big Tasty", 'Hamburger', 'Royal Cheeseburger']:
+                self.offer_to_turn_into_combo(item)
+            if item.type == 'desserts':
+                order.dessert_offered = True
         if order.dessert_offered is False:
             self.offer_dessert()
             order.dessert_offered = True
@@ -73,72 +91,37 @@ class Manager:
         self.errors = []
         return txt[:-1]
 
-
-    def validate(self, order: Order, menu: Menu) -> str:
+    def validate(self, order: Order, menu: Menu):
         if not order.list:
             self.errors.append(
                 "System: No items were ordered. Try again.")
         else:
             for item in order.list:
-                if item.type == 'combos':
+                if item.type in ['burgers', 'drinks', 'fries', 'desserts', 'sauces']:
+                    if self.validate_item(item, menu):
+                        break
+                elif item.type == 'combos':
                     if self.validate_combo(item, menu):
-                        break
-                elif item.type == 'burgers':
-                    if self.validate_burger(item, menu):
-                        break
-                elif item.type == 'drinks':
-                    if self.validate_drink(item, menu):
-                        break
-                elif item.type == 'fries':
-                    if self.validate_fries(item, menu):
-                        break
-                elif item.type == 'desserts':
-                    order.dessert_offered = True
-                    if self.validate_dessert(item, menu):
                         break
                 elif item.type == 'deals':
                     if self.validate_deal(item, menu):
                         break
                 elif item.type == 'ingredients':
                     self.errors.append(
-                        "Ingredients cannot be ordered standalone.")
+                        f"Ingredients cannot be ordered standalone. Item {item.name} was removed")
                     order.list.remove(item)
                     break
-        # return self.get_errors()
+                else:
+                    # Item type validation failed, no such type
+                    err = f"Error: {item.name} of type [{item.type}] is not in the menu."
+                    self.errors.append(err)
+                    order.list.remove(item)
 
-    def validate_burger(self, item: OrderItem, menu: Menu) -> bool:
+    def validate_item(self, item: OrderItem, menu: Menu) -> bool:
         if item.name is None or item.name == 'None':
-            self.handle_missing_name("burger")
+            self.handle_missing_name(item)
             return True
-        self.validate_quantity(item)
-        if self.validate_size(item, menu):
-            return True
-        self.validate_modifiers(item, menu)
-        return False
-
-    def validate_drink(self, item: OrderItem, menu: Menu) -> bool:
-        if item.name is None or item.name == 'None':
-            self.handle_missing_name("drink")
-            return True
-        self.validate_quantity(item)
-        if self.validate_size(item, menu):
-            return True
-        self.validate_modifiers(item, menu)
-        return False
-
-    def validate_fries(self, item: OrderItem, menu: Menu):
-        if item.name is None or item.name == 'None':
-            self.handle_missing_name("fries")
-            return True
-        self.validate_quantity(item)
-        if self.validate_size(item, menu):
-            return True
-        self.validate_modifiers(item, menu)
-        return False
-
-    def validate_dessert(self, item: OrderItem, menu: Menu):
-        if item.name is None:
-            self.handle_missing_name("dessert")
+        if self.validate_name_in_menu(item, menu):
             return True
         self.validate_quantity(item)
         if self.validate_size(item, menu):
@@ -147,142 +130,145 @@ class Manager:
         return False
 
     def validate_name_in_menu(self, item: OrderItem, menu: Menu) -> bool:
-        names_in_menu = list(menu.menu["virtual"][item.name].keys())
+        # todo test
+        names_in_menu = list(menu.menu[item.type])
         if item.name not in names_in_menu:
             msg = ManagerMessage(
-                f"System: There is no such {item.name} in the {item.type} menu?", "clarify")
+                f"System: There is no {item.name} in the {item.type} menu. Available options are: {names_in_menu}. Which one would you like?", "clarify")
             self.issue_queue.put(msg)
             return True
-        return
+        return False
 
     def validate_combo(self, item: OrderItem, menu: Menu) -> bool:
-        if item.name is None:
-            self.handle_missing_name("combo")
+        if self.validate_item(item, menu):
             return True
-        if item.name not in list(menu.menu["virtual"][item.type]):
-            return True
-        self.validate_size(item, menu)
-        self.validate_quantity(item)
         if not item.children:
             item.children = [
-                ChildrenItem(type='burgers'),
+                ChildrenItem(type='burgers', name=item.name[:-5]),
                 ChildrenItem(type='drinks'),
-                ChildrenItem(type='fries')]
+                ChildrenItem(type='fries', name='French Fries')]
         for child in item.children:
             if child.type == 'burgers':
                 availablle_item = item.name[:-5]
                 if child.name != availablle_item:
-                    err =  f"{child.name} has to be {availablle_item} in the {item.name}. Was: {child.name}, Now: {availablle_item}"
+                    err = f"{child.name} has to be {availablle_item} in the {item.name}. Was: {child.name}, Now: {availablle_item}"
                     self.errors.append(err)
                     child.name = availablle_item
-                if self.validate_burger(child, menu):
+                if self.validate_item(child, menu):
                     return True
             if child.type == 'drinks':
                 availablle_items = list(
                     menu.menu["combos"][item.name]["drinks"])
                 if child.name not in availablle_items:
                     if child.name is None or child.name == 'None':
-                        self.handle_missing_name("drink", item.name)
+                        self.handle_missing_name(child, item)
                         return True
                     msg = ManagerMessage(
                         f"System: {child.name} is not allowed in {item.name}. Drink has to be in the list {availablle_items}. Which one would you like?", "clarify")
                     self.issue_queue.put(msg)
                     return True
-                if self.validate_drink(child, menu):
+                if self.validate_item(child, menu):
                     return True
             if child.type == 'fries':
                 availablle_items = list(
                     menu.menu["combos"][item.name]["fries"])
                 if child.name not in availablle_items:
                     if child.name is None or child.name == 'None':
-                        self.handle_missing_name("fries", item.name)
+                        self.handle_missing_name(child, item)
                         return True
                     msg = ManagerMessage(
                         f"System: {child.name} is not allowed in {item.name}. Fries item has to be in the list {availablle_items}?", "clarify")
                     self.issue_queue.put(msg)
                     return True
-                if self.validate_fries(child, menu):
+                if self.validate_item(child, menu):
                     return True
         return False
 
     def validate_deal(self, item: OrderItem, menu: Menu):
-        if item.name is None or item.name == "None":
-            self.handle_missing_name("deal")
+        if self.validate_item(item, menu):
             return True
-        self.validate_size(item, menu)
-        self.validate_quantity(item)
         # Validate Children Items
         if not item.children:
             item.children = [
                 ChildrenItem(type='burgers'),
                 ChildrenItem(type='burgers')]
+        if len(item.children) != 2:
+            item.children = item.children[:2]
+            item.children.append(ChildrenItem(type='burgers'))
+
         for child in item.children:
             if child.type == 'burgers':
-                availablle_items = list(menu.menu["deals"][item.name]["possible_items"])
+                availablle_items = list(
+                    menu.menu["deals"][item.name])
                 if child.name not in availablle_items:
                     if child.name is None or child.name == 'None':
-                        self.handle_missing_name("burger", item.name)
+                        self.handle_missing_name(child, item)
                         return True
                     msg = ManagerMessage(
                         f"System: {child.name} is not allowed in {item.name}. Both burgers have to be in the list {availablle_items}?", "clarify")
                     self.issue_queue.put(msg)
                     return True
-                if self.validate_burger(child, menu):
+                if self.validate_item(child, menu):
                     return True
             # No drinks or Fries in the deal
             if child.type == 'drinks':
-                # todo turn child extra drinks and fires into speratate items
                 if child.name | child.size | child.modifiers:
                     err = f"Deals cannot contain drinks. {child.name} was removed."
                     self.errors.append(err)
                     child.name = None
-                    child.size = None
                     child.modifiers = None
             if child.type == 'fries':
                 if child.name | child.size | child.modifiers:
                     err = f"Deals cannot contain fries. {child.name} was removed."
                     self.errors.append(err)
                     child.name = None
-                    child.size = None
                     child.modifiers = None
         return False
 
     def validate_quantity(self, item):
         if isinstance(item, OrderItem):
             if item.quantity < 1:
-                self.errors.append(f"{item.name}'s quantity must be > 0. Was: {item.quantity} , Now: {max(1, abs(item.quantity))}")
+                self.errors.append(
+                    f"{item.name}'s quantity must be > 0. Was: {item.quantity} , Now: {max(1, abs(item.quantity))}")
                 item.quantity = max(1, abs(item.quantity))
-        elif isinstance(item, ChildrenItem):
-            # todo create variable to see if i can transfer extra quantities to separate items in order
+        elif isinstance(item, IngredientsItem):
             if item.quantity < 1:
-                self.errors.append(f"Combos and deals include quantity of exactly 1 'child' type. {item.name}'s quantity was changed from {item.quantity} to 1")
-                item.quantity = 1
+                self.errors.append(
+                    f"Ingredient {item.name}'s quantity must be > 0. Was: {item.quantity} , Now: {max(1, abs(item.quantity))}")
+                item.quantity = max(1, abs(item.quantity))
         return
-    
+
     def validate_size(self, item, menu: Menu) -> bool:
-        if item.type in ['combos', 'burgers', 'desserts', 'deals', 'ingredients']:
+        if isinstance(item, ChildrenItem):
+            return False
+        if item.type in ['burgers', 'desserts', 'deals', 'ingredients', 'sauces']:
             item.size = None
         else:
             if item.size is None:
                 self.handle_missing_size(item.name)
                 return True
-            if item.type == 'drinks':
+            if item.type in ['fries', 'drinks', "combos"]:
                 available_sizes = list(
-                    menu.menu["drinks"][item.name]["size_price"].keys())
+                    menu.menu[item.type][item.name]['size_price'].keys())
                 if item.size not in available_sizes:
-                    self.errors.append(f"Wrong size of {item.name}. Available sizes: {available_sizes}. Was '{item.size}', Now: '{available_sizes[0]}'")
-                    item.size = available_sizes[0]
-            if item.type == 'fries':
-                available_sizes = ['small', 'medium', 'large']
-                if item.size not in available_sizes:
-                    self.errors.append( f"Wrong size of {item.name}. Available sizes: {available_sizes}. Was '{item.size}', Now: 'medium'")
-                    item.size = 'medium'
+                    self.issue_queue.put(
+                        f"Wrong size of {item.name}. Available sizes: {available_sizes}.\
+                         Which one would you like?")
         return False
-    
+
     def validate_modifiers(self, item, menu: Menu):
-        if item.type in ['desserts', 'deals', 'ingredients', 'virtual', 'combos']:
+        if item.type in ['desserts', 'deals', 'ingredients', 'virtual', 'sauces']:
             item.modifiers_to_add = []
             item.modifiers_to_remove = []
+        elif item.type == 'combos':
+            item.modifiers_to_remove = []
+            for mod in item.modifiers_to_add:
+                possible_ingredients = list(menu.menu['sauces'])
+                print(f"possible_ingredients: {possible_ingredients}")
+                if mod.name not in possible_ingredients:
+                    self.errors.append(
+                        f"You cannot add {mod.name} for {item.name}. '{mod.name}' was removed.")
+                    item.modifiers_to_add.remove(mod)
         else:
             possible_ingredients = menu.menu[item.type][item.name]['possible_ingredients']
             default_ingredients = menu.menu[item.type][item.name]['default_ingredients']
@@ -295,44 +281,28 @@ class Manager:
 
             for mod in item.modifiers_to_remove:
                 if mod.name not in default_ingredients:
-                    self.errors.append(f"You cannot remove {mod.name} for {item.name}")
+                    self.errors.append(
+                        f"You cannot remove {mod.name} for {item.name}")
                     item.modifiers_to_remove.remove(mod)
 
-    def handle_missing_name(self, name, parent_name=None) -> None:
-        msg = ManagerMessage(
-            f"System: What kind of {name}?", "clarify")
-        if parent_name:
+    def handle_missing_name(self, item, parent=None) -> None:
+        if item.type == 'fries':
+            name = item.type
+        else:
+            name = item.type[:-1]
+        if parent:
+            if parent.type == 'deals':
+                msg = ManagerMessage(
+                    f"System: What two {name}s for your {parent.name}?", "clarify")
+            if parent.type == 'combos':
+                msg = ManagerMessage(
+                    f"System: What kind of {name} for your {parent.name}?", "clarify")
+        else:
             msg = ManagerMessage(
-                f"System: What kind of {name} for you {parent_name}?", "clarify")
+                f"System: What kind of {name}?", "clarify")
         self.issue_queue.put(msg)
 
-    def handle_missing_size(self, name, parent_name=None) -> None:
+    def handle_missing_size(self, name) -> None:
         msg = ManagerMessage(
             f"System: What size of {name}?", "clarify")
-        if parent_name:
-            msg = ManagerMessage(
-                f"System: What size of {name} for you {parent_name}?", "clarify")
         self.issue_queue.put(msg)
-
-
-def validate_menu_item(item: OrderItem):
-    """Unknown item not from the menu
-
-    Args:
-        order (Order): _description_
-    """
-    errors = []
-    if item.type not in ["burgers", "fries", "drinks", "desserts", "deals", "sauces"]:
-        err = f"Error: {item.name} of type [{item.type}] is not in the menu."
-        errors.append(err)
-    if item.name not in []:
-        pass
-    return
-
-
-def validate_standalone_item(item: OrderItem):
-    pass
-
-
-def validate_combo(order: Order):
-    pass

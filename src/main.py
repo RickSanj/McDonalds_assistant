@@ -44,7 +44,7 @@ def main():
                 if i.children:
                     for j in i.children:
                         print('-------- ', j.name, j.type,
-                              j.size, j.quantity, j.modifiers_to_add, j.modifiers_to_remove)
+                              j.modifiers_to_add, j.modifiers_to_remove)
 
             manager.update_order(order, llm_response)
             manager.validate(order, menu)
@@ -66,7 +66,7 @@ def main():
                     if i.children:
                         for j in i.children:
                             print('-------- ', j.name, j.type,
-                                j.size, j.quantity, j.modifiers_to_add, j.modifiers_to_remove)
+                                j.modifiers_to_add, j.modifiers_to_remove)
 
                 manager.update_order(order, llm_response)
                 manager.validate(order, menu)

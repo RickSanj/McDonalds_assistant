@@ -1,112 +1,136 @@
 import yaml
 import json
 
+SMALL_COEF = 0.75
+LARGE_COEF = 1.25
+
+
 class Menu():
     def __init__(self) -> None:
-        self.menu = get_general_menu()
-
-def get_general_menu():
-    with open('./src/data/parsed_menu.json', 'r') as file:
-        data = json.load(file)
-    return data
-
-def get_clarify_menu():
-    with open('./src/data/parsed_menu.json', 'r') as file:
-        data = json.load(file)
-    return data
-
-def get_price_list():
-    # with open('./src/data/menu_virtual_items.yaml', 'r') as f:
-    #     data = yaml.full_load(f)
+        self.menu = process_yaml_menus()
 
 
-    # output = {
-    #     'UserName': data.get('UserName'),
-    #     'Password': data.get('Password'),
-    #     'phone': data.get('Phone'),
-    #     'Skills': ' '.join(data.get('Skills', []))
-    # }
-    # 👇 Load as Python dict
-
-    with open('./src/data/menu_virtual_items.yaml', 'r') as f:
-        data = yaml.safe_load(f)
-
-
-    json_str = json.dumps(data, indent=2)
-
-    print(json_str)  # OR just use `data` as a dict
-
-def expand_sizes(item):
-    """Return a dict of size-specific pricing if applicable."""
-    base_price = item["price"]
-    sizes = {}
-    if "properties" in item:
-        for prop in item["properties"]:
-            if prop["name"] == "size":
-                for size in prop["values"]:
-                    sizes[size] = base_price
-    return sizes if sizes else {"default": base_price}
-
-
-def parse_yaml_menus():
-    with open('./src/data/menu_virtual_items.yaml', "r") as f:
-        data = yaml.safe_load(f)
-
-    parsed_menu = {
+def process_yaml_menus():
+    json_data = {
+        "virtual": {},
         "combos": {},
         "drinks": {},
         "burgers": {},
         "fries": {},
         "desserts": {},
         "deals": {},
+        "sauces": {},
         "ingredients": {}
     }
 
-    # Process combos
-    for combo in data.get("combos", []):
-        parsed_menu["combos"][combo["name"]] = {
-            "price": combo["price"],
-            "fries": combo["slots"].get("fries", []),
-            "drinks": combo["slots"].get("drinks", []),
-            "sauces": []  # Sauces not present in original YAML
-        }
+    # menu_virtual_items
+    with open('./src/data/menu_virtual_items.yaml', 'r') as f:
+        data = yaml.safe_load(f)
 
-    # Process items
-    for item in data.get("items", []):
-        category = item["category"]
-        name = item["name"]
+    if 'items' in data and isinstance(data['items'], list):
+        for item in data['combos']:
+            if item.get("virtual") is True:
+                possible_items = item.get("possible_items", [])
+                json_data["virtual"]['combos'] = possible_items
+            else:
+                name = item.get("name")
+                price = item.get("price")
+                slots = item.get("slots", {})
+                fries = slots.get("fries", [])
+                drinks = slots.get("drinks", [])
 
-        item_entry = {
-            "default_ingredients": [],         # Extend if ingredients appear later
-            "possible_ingredients": []
-        }
+                json_data["combos"][name] = {
+                    "size_price": {
+                        "small": round(SMALL_COEF*price, 2),
+                        "medium": price,
+                        "large": round(LARGE_COEF*price, 2)
+                    },
+                    "fries": fries,
+                    "drinks": drinks
+                }
 
-        sizes = expand_sizes(item)
-        if "default" in sizes:
-            item_entry["price"] = sizes["default"]
-        else:
-            item_entry["size_price"] = sizes
+        for item in data['items']:
+            if item.get("virtual") is True:
+                name = item.get("name")
+                possible_items = item.get("possible_items", [])
+                json_data["virtual"][name] = possible_items
+            else:
+                name = item.get("name")
+                category = item.get("category")
+                price = item.get("price")
+                properties = item.get("properties", [])
 
-        if category == "drinks":
-            parsed_menu["drinks"][name] = item_entry
-        elif category == "burgers":
-            parsed_menu["burgers"][name] = item_entry
-        elif category == "fries":
-            parsed_menu["fries"][name] = item_entry
-        elif category == "desserts":
-            parsed_menu["desserts"][name] = item_entry
+                if category in ['burgers', 'desserts']:
+                    json_data[category][name] = {
+                        "price": price
+                    }
 
-    # Process deals
-    for deal in data.get("deals", []):
-        parsed_menu["deals"][deal["name"]] = {
-            "price": None,  # Not specified in the input
-            "possible_items": deal.get("possible_items", [])
-        }
+                elif category in ['drinks', 'fries']:
+                    size_property = next(
+                        (p for p in properties if p.get("name") == "size"), None)
+                    sizes = size_property.get(
+                        "values", []) if size_property else ['default']
 
-    # Optional: save as JSON
-    with open("parsed_menu.json", "w") as f:
-        json.dump(parsed_menu, f, indent=2)
+                    size_price = {size: price for size in sizes}
+                    for size in size_price.keys():
+                        if size == "small":
+                            size_price["small"] = round(SMALL_COEF *
+                                                        size_price["small"], 2)
+                        if size == "large":
+                            size_price["large"] = round(
+                                LARGE_COEF * size_price["large"], 2)
 
-    # Optional: print for preview
-    print(json.dumps(parsed_menu, indent=2))
+                    json_data[category][name] = {
+                        "size_price": size_price
+                    }
+    # menu_deals
+    with open('./src/data/menu_deals.yaml', 'r') as f:
+        data = yaml.safe_load(f)
 
+    if 'deals' in data and isinstance(data['deals'], list):
+        for item in data['deals']:
+            name = item.get("name")
+            possible_items = item.get("possible_items", [])
+            json_data["deals"][name] = possible_items
+
+    # menu_upsells
+    with open('./src/data/menu_upsells.yaml', 'r') as f:
+        data = yaml.safe_load(f)
+
+    if 'combos' in data and isinstance(data['combos'], list):
+        for item in data['combos']:
+            name = item.get("name")
+            slots = item.get("slots", {})
+            sauces = slots.get("sauces", [])
+            possible_items = sauces.get("options", [])
+            json_data["combos"][name]['sauces'] = possible_items
+
+    if 'items' in data and isinstance(data['items'], list):
+        for item in data['items']:
+            name = item.get('name')
+            category = item.get('category')
+            if category == 'sauces':
+                price = item.get("price")
+                json_data["sauces"][name] = price
+    # menu_ingredients
+    with open('./src/data/menu_ingredients.yaml', 'r') as f:
+        data = yaml.safe_load(f)
+
+    if 'ingredients' in data and isinstance(data['ingredients'], list):
+        for item in data['ingredients']:
+            name = item.get("name")
+            price = item.get("price")
+            json_data["ingredients"][name] = price
+    if 'items' in data and isinstance(data['items'], list):
+        for item in data['items']:
+            name = item.get('name')
+            category = item.get('category')
+            default_ingredients = item.get('default_ingredients', [])
+            possible_ingredients = item.get('possible_ingredients', [])
+            json_data[category][name]['default_ingredients'] = default_ingredients
+            json_data[category][name]['possible_ingredients'] = possible_ingredients
+
+    with open("./src/data/test.json", "w") as json_file:
+        json_file.write(json.dumps(json_data, indent=4))
+
+    return json_data

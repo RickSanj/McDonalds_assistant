@@ -22,25 +22,17 @@ class ChildrenItem(BaseModel):
     )
     type: str = Field(
         ...,
-        description="Type of the item from the menu. Could be 'fries' or 'drinks' or 'burgers'."
-    )
-    size: Optional[str] = Field(
-        None,
-        description="Size of the item from the menu. Possible values: 'small', 'medium', 'large'."
+        description="Type of the item from the menu. E.g. 'fries', 'drinks', 'burgers'." 
     )
     modifiers_to_add: List[IngredientsItem] = Field(
         default_factory=list,
         description="""Modifications of the item from the menu to add from possible_ingredients.
-        If not applicable: []. Example: 'Cheese Slice', 'Mayo' for 'fries', 'Ice' for drinks"""
+        For deals: []. E.g.: 'Cheese Slice', 'Mayo' for 'fries', 'Ice' for drinks, 'Ranch' for 'combos'"""
     )
     modifiers_to_remove: List[IngredientsItem] = Field(
         default_factory=list,
         description="""Modifications of the item from the menu to remove from default_ingredients.
-        If not applicable: []. Example: 'Onion', 'Pickles' for 'burgers', 'Ice' for drinks"""
-    )
-    quantity: int = Field(
-        1,
-        description="Is always 1."
+        For deals and combos: []. E.g. 'Pickles' for 'burgers', 'Ice' for 'drinks'"""
     )
 
 
@@ -52,11 +44,11 @@ class OrderItem(BaseModel):
     type: str = Field(
         ...,
         description="""Type of the item from the menu like: 'burgers', 'drinks', 'desserts',
-         'fries', 'combos', 'deals', 'ingredients'."""
+         'fries', 'combos', 'deals', 'sauces', 'ingredients'."""
     )
     size: Optional[str] = Field(
         None,
-        description="""Only applicable to fries and some drinks. See the menu.
+        description="""Only applicable to fries, drinks, combos. See the menu.
          Usually sizes are small, medium and large"""
     )
     quantity: int = Field(
@@ -122,7 +114,7 @@ class Order():
             if item.children:
                 res += "      With:\n"
                 for child in item.children:
-                    res += f"        * [{child.type}]: {child.name} {child.size} {child.modifiers_to_add}, {child.modifiers_to_remove}\n"
+                    res += f"        * [{child.type}]: {child.name} {child.modifiers_to_add}, {child.modifiers_to_remove}\n"
         res += "==================\n"
         return res
 
@@ -136,8 +128,9 @@ class Order():
         for item in self.list:
             if item.type == 'combos':
                 total += item.quantity * \
-                    self.menu.menu["combos"][item.name]["price"]
-                total += self.calculate_modifications(item)
+                    self.menu.menu["combos"][item.name]["size_price"][item.size]
+                for mod in item.modifiers_to_add:
+                    total += self.menu.menu["sauces"][mod.name]
             if item.type == 'drinks':
                 total += item.quantity * \
                     self.menu.menu["drinks"][item.name]["size_price"][item.size]
@@ -158,9 +151,9 @@ class Order():
                     deal_sum += self.menu.menu["burgers"][child.name]["price"]
                     total += self.calculate_modifications(child)
                 total += deal_sum * 0.8
-            if item.type == 'ingredients':
+            if item.type == 'sauces':
                 total += item.quantity * \
-                    self.menu.menu["ingredients"][item.name]["price"]
+                    self.menu.menu["sauces"][item.name]
         return total
 
     def calculate_modifications(self, item) -> float:
@@ -176,5 +169,5 @@ class Order():
         available_mods = self.menu.menu["ingredients"].keys()
         for modidfier in item.modifiers_to_add:
             if modidfier.name in available_mods:
-                total += modidfier.quantity * self.menu.menu["ingredients"][modidfier.name]["price"]
+                total += modidfier.quantity * self.menu.menu["ingredients"][modidfier.name]
         return total
