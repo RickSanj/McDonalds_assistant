@@ -1,12 +1,17 @@
-from mcdonalds_proj.order import OrderState
-from mcdonalds_proj.menu import Menu
+"""
+This module is responsible for all actions related to LLM.
+"""
+
 from openai import OpenAI
+import instructor
+from mcdonalds_proj.order import OrderState
 from mcdonalds_proj.manager import ManagerMessage
 from mcdonalds_proj.order import Order
-import instructor
-
 
 class LLM:
+    """
+    Class to replesent LLM object
+    """
     def __init__(self) -> None:
         self.model = 'gpt-4.1-mini'
         self.max_retries = 5
@@ -32,30 +37,31 @@ class LLM:
         1. GENERAL ORDER STRUCTURE  
         - Each order consists of one or more 'OrderItem' entries.
         - Each OrderItem includes: 'type', 'name', 'size', 'quantity', 'modifiers', and optionally, 'children' for nested items.
-        - OrderItem types include: 'burgers', 'drinks', 'desserts', 'fries', 'combos', 'deals', 'ingredients'.
+        - OrderItem types include: 'burgers', 'drinks', 'desserts' ('ice cream' as subcategory of desserts), 'fries', 'combos', 'deals', 'ingredients', 'sauces'.
 
         2. 'order_finished' FLAG  
-        - If the customer indicates they don't want anything else (e.g., "that's all", "no, thanks"), set 'order_finished = True'.
+        - Only when asked 'Would you like anything else?' If the customer indicates they don't want anything else (e.g., "that's all", "no, thanks"), set 'order_finished = True'. 
+        - 
 
         3. TYPE & NAME DETECTION  
         - First, identify the correct 'type' of each item.
         - Then, extract the specific 'name'. If the user gives only a general reference (e.g., "a burger", "some fries"), use a placeholder name "None".
 
         4. COMBO RULES  
-        - A combo (e.g., "Big Mac Meal") includes:
+        - A combo (e.g., "Big Mac Meal") includes three sub items:
             - a burger (inferred from combo name e.g., "Big Mac),
             - one drink (if not mentioned, use name="None"),
             - one fries item (default is "French Fries" if unspecified),
-            - optionally sauce.
+            - optionally a sauce to the modifiers_to_add.
         - If the user lists drink/fries/sauce ingredient separately and they logically match a combo, assign them as children of the combo.
         - For modifiers (e.g., "no ice", "add Ranch"), assign them to the correct nested item.
+        - If 'Sauce was offered' is in modifiers_to_remove, keep it there and do not remove it. 
+        - User may specify multiple sub items in the same message
 
         5. DEALS  
         - A deal includes two burgers.
         - There are two types of deals that include different types of burgers. See the menu.
-        - If the user asks for a "deal" without naming it, assign 'name = None'.
-        - If the user orders 2 same burgers (without naming a deal), infer it as a deal automatically.
-        - If only 1 burger is named, assign placeholder burger with name 'None'.
+        - If the user asks for a "deal" without naming it or only 1 burger is named, assign 'name = None'.
 
         6. INGREDIENT MODIFIERS  
         - Modifiers include both removals (from default_ingredients) and additions (from possible_ingredients).
@@ -72,12 +78,13 @@ class LLM:
         - Preserve all modifiers when converting it into another item.
 
         9. DESSERTS & ICE CREAM  
-        - If the user asks for "dessert" or "ice cream" without naming the item, use name = 'None'.
+        - User may use general reference to dessert as dessert or as ice cream. See virtual in menu.
+        - If user did not specify name of the ice cream, replace type of the item to 'ice cream'
 
         10. INVALID ENTRIES  
         - Ingredients cannot be ordered standalone. Ignore if attempted.
-
----     --- CONTEXT ---
+    
+        --- CONTEXT ---
         - Current order state: {order.list}
         - Assistant's message: {manager_msg.text}
         - Menu: {str(order.menu.menu)}

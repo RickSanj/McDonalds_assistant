@@ -4,8 +4,6 @@ from mcdonalds_proj.menu import Menu
 from mcdonalds_proj.llm import LLM
 
 from dotenv import load_dotenv
-from datetime import datetime
-
 
 def main():
     # logging.basicConfig(filename=f"./logs/{datetime.now()}.log",
@@ -21,6 +19,7 @@ def main():
     # logger.critical("Internet is down")
 
     load_dotenv()
+
     menu = Menu()
     manager = Manager()
     llm = LLM()
@@ -73,7 +72,7 @@ def main():
                 print(manager.get_errors())
                 print(order.summary())
 
-            manager.apply_business_rules(order)
+            manager.apply_business_rules(order, menu)
 
         if order.finished is False:
             manager.last_call()

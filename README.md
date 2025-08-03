@@ -1,13 +1,9 @@
 To-do list:
 
-- parse menu 
-- validate state of the order
 - testing 
-
 - async
 - REST API 
 
-Menu in my json 
 
 if it doesn't pass the validation, the system should ask the user to specify the order again, and discard the LLM output.
 

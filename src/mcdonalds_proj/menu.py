@@ -1,16 +1,26 @@
-import yaml
+"""
+This module is responsible for all actions related to menu.
+Like parsing of yaml files, calibrating prices according to sizes, structurizing to a json obj 
+"""
 import json
+import yaml
 
 SMALL_COEF = 0.75
 LARGE_COEF = 1.25
 
 
 class Menu():
+    """
+    Class to represent menu
+    """
     def __init__(self) -> None:
         self.menu = process_yaml_menus()
 
 
 def process_yaml_menus():
+    """
+    return json like object of the menu
+    """
     json_data = {
         "virtual": {},
         "combos": {},
@@ -24,7 +34,7 @@ def process_yaml_menus():
     }
 
     # menu_virtual_items
-    with open('./src/data/menu_virtual_items.yaml', 'r') as f:
+    with open('./src/data/menu_virtual_items.yaml', encoding='UTF-8', mode='r') as f:
         data = yaml.safe_load(f)
 
     if 'items' in data and isinstance(data['items'], list):
@@ -84,7 +94,7 @@ def process_yaml_menus():
                         "size_price": size_price
                     }
     # menu_deals
-    with open('./src/data/menu_deals.yaml', 'r') as f:
+    with open('./src/data/menu_deals.yaml', encoding='UTF-8', mode='r') as f:
         data = yaml.safe_load(f)
 
     if 'deals' in data and isinstance(data['deals'], list):
@@ -94,7 +104,7 @@ def process_yaml_menus():
             json_data["deals"][name] = possible_items
 
     # menu_upsells
-    with open('./src/data/menu_upsells.yaml', 'r') as f:
+    with open('./src/data/menu_upsells.yaml', encoding='UTF-8', mode='r') as f:
         data = yaml.safe_load(f)
 
     if 'combos' in data and isinstance(data['combos'], list):
@@ -113,7 +123,7 @@ def process_yaml_menus():
                 price = item.get("price")
                 json_data["sauces"][name] = price
     # menu_ingredients
-    with open('./src/data/menu_ingredients.yaml', 'r') as f:
+    with open('./src/data/menu_ingredients.yaml', encoding='UTF-8', mode='r') as f:
         data = yaml.safe_load(f)
 
     if 'ingredients' in data and isinstance(data['ingredients'], list):
@@ -130,7 +140,7 @@ def process_yaml_menus():
             json_data[category][name]['default_ingredients'] = default_ingredients
             json_data[category][name]['possible_ingredients'] = possible_ingredients
 
-    with open("./src/data/test.json", "w") as json_file:
+    with open("./src/data/test.json", encoding='UTF-8', mode='w') as json_file:
         json_file.write(json.dumps(json_data, indent=4))
 
     return json_data
