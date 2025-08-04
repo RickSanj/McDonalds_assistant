@@ -68,6 +68,8 @@ class Manager:
         order.summary()
 
     def apply_business_rules(self, order: Order, menu: Menu):
+        small_burger_count = 0
+        big_burger_count = 0
         burger_count = 0
         combo_count = 0
         small_deal_items = []
@@ -91,35 +93,146 @@ class Manager:
                 burger_count += 1
                 # If the user has ordered a burger, offer to turn it into a combo, for every burger ordered.
                 if item.name not in ["Big Tasty", 'Hamburger', 'Royal Cheeseburger']:
-                    self.offer_to_turn_into_combo(item)
-                    return
+                    if "Flag: Combo was offered" not in [mod.name for mod in item.modifiers_to_add]:     
+                        self.offer_to_turn_into_combo(item)
+                        item.modifiers_to_add.append(IngredientsItem(name='Flag: Combo was offered'))
+                        return
                 if item.name in menu.menu['deals']['Small Double Deal']:
+                    small_burger_count += item.quantity
                     small_deal_items.append(item)
                 if item.name in menu.menu['deals']['Big Double Deal']:
+                    big_burger_count += item.quantity
                     big_deal_items.append(item)
 
             if item.type == 'desserts':
                 order.dessert_offered = True
 
-        # turn two small burgers into Small Double Deal
-        while len(small_deal_items) > 1:
+       # Turn two small burgers into Small Double Deal
+        while small_burger_count >= 2:
             item1 = small_deal_items[0]
-            item2 = small_deal_items[1]
-            small_deal = OrderItem(
-                name='Small Double Deal', type='deals', quantity=1, children=[item1, item2])
-            order.append(small_deal)
-            order.remove(item1)
-            order.remove(item2)
+
+            if item1.quantity >= 2:
+                # Use two of the same item
+                while item1.quantity >= 2:
+                    child1 = ChildrenItem(
+                        name=item1.name,
+                        type=item1.type,
+                        modifiers_to_add=item1.modifiers_to_add[:],
+                        modifiers_to_remove=item1.modifiers_to_remove[:]
+                    )
+                    child2 = ChildrenItem(
+                        name=item1.name,
+                        type=item1.type,
+                        modifiers_to_add=item1.modifiers_to_add[:],
+                        modifiers_to_remove=item1.modifiers_to_remove[:]
+                    )
+                    small_deal = OrderItem(
+                        name='Small Double Deal',
+                        type='deals',
+                        quantity=1,
+                        children=[child1, child2]
+                    )
+                    order.list.append(small_deal)
+                    item1.quantity -= 2
+                    small_burger_count -= 2
+                if item1.quantity == 0:
+                    order.list.remove(item1)
+            elif len(small_deal_items) >= 2:
+                # Use two different items
+                item2 = small_deal_items[1]
+                child1 = ChildrenItem(
+                    name=item1.name,
+                    type=item1.type,
+                    modifiers_to_add=item1.modifiers_to_add[:],
+                    modifiers_to_remove=item1.modifiers_to_remove[:]
+                )
+                child2 = ChildrenItem(
+                    name=item2.name,
+                    type=item2.type,
+                    modifiers_to_add=item2.modifiers_to_add[:],
+                    modifiers_to_remove=item2.modifiers_to_remove[:]
+                )
+                small_deal = OrderItem(
+                    name='Small Double Deal',
+                    type='deals',
+                    quantity=1,
+                    children=[child1, child2]
+                )
+                item2.quantity -= 1
+                if item2.quantity == 0:
+                    order.list.remove(item2)
+                    small_deal_items.remove(item2)
+                order.list.append(small_deal)
+                order.list.remove(item1)
+                small_deal_items.remove(item1)
+                small_deal_items.remove(item2)
+                small_burger_count -= 2
+            else:
+                break
+
 
         # turn two big burgers into Big Double Deal
-        while len(big_deal_items) > 1:
+        while big_burger_count >= 2:
             item1 = big_deal_items[0]
-            item2 = big_deal_items[1]
-            big_deal = OrderItem(
-                name='Big Double Deal', type='deals', quantity=1, children=[item1, item2])
-            order.append(big_deal)
-            order.remove(item1)
-            order.remove(item2)
+
+            if item1.quantity >= 2:
+                # Use two of the same item
+                while item1.quantity >= 2:
+                    child1 = ChildrenItem(
+                        name=item1.name,
+                        type=item1.type,
+                        modifiers_to_add=item1.modifiers_to_add[:],
+                        modifiers_to_remove=item1.modifiers_to_remove[:]
+                    )
+                    child2 = ChildrenItem(
+                        name=item1.name,
+                        type=item1.type,
+                        modifiers_to_add=item1.modifiers_to_add[:],
+                        modifiers_to_remove=item1.modifiers_to_remove[:]
+                    )
+                    big_deal = OrderItem(
+                        name='Big Double Deal',
+                        type='deals',
+                        quantity=1,
+                        children=[child1, child2]
+                    )
+                    order.list.append(big_deal)
+                    item1.quantity -= 2
+                    big_burger_count -= 2
+                if item1.quantity == 0:
+                    order.list.remove(item1)
+            elif len(big_deal_items) >= 2:
+                # Use two different items
+                item2 = big_deal_items[1]
+                child1 = ChildrenItem(
+                    name=item1.name,
+                    type=item1.type,
+                    modifiers_to_add=item1.modifiers_to_add[:],
+                    modifiers_to_remove=item1.modifiers_to_remove[:]
+                )
+                child2 = ChildrenItem(
+                    name=item2.name,
+                    type=item2.type,
+                    modifiers_to_add=item2.modifiers_to_add[:],
+                    modifiers_to_remove=item2.modifiers_to_remove[:]
+                )
+                big_deal = OrderItem(
+                    name='Big Double Deal',
+                    type='deals',
+                    quantity=1,
+                    children=[child1, child2]
+                )
+                item2.quantity -= 1
+                if item2.quantity == 0:
+                    order.list.remove(item2)
+                    big_deal_items.remove(item2)
+                order.list.append(big_deal)
+                order.list.remove(item1)
+                big_deal_items.remove(item1)
+                big_deal_items.remove(item2)
+                big_burger_count -= 2
+            else:
+                break
 
         # If the user has order any burger or a combo, offer to add a dessert, but only once per order.
         if (burger_count > 0 or combo_count > 0) and order.dessert_offered is False:
@@ -332,12 +445,14 @@ class Manager:
                     self.errors.append(
                         f"You cannot add {mod.name} for {item.name}. '{mod.name}' was removed.")
                     item.modifiers_to_add.remove(mod)
+                mod.quantity = 1
+
         else:
             possible_ingredients = menu.menu[item.type][item.name]['possible_ingredients']
             default_ingredients = menu.menu[item.type][item.name]['default_ingredients']
 
             for mod in item.modifiers_to_add:
-                if mod.name not in possible_ingredients:
+                if mod.name not in possible_ingredients and mod.name != 'Flag: Combo was offered':
                     self.errors.append(
                         f"You cannot add {mod.name} for {item.name}. '{mod}' was removed.")
                     item.modifiers_to_add.remove(mod)

@@ -1,0 +1,17 @@
+services:
+  mcdonalds-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mcdonalds-app
+    volumes:
+      - ./src:/app/src
+      - ./pyproject.toml:/app/pyproject.toml
+      - ./poetry.lock:/app/poetry.lock
+      - ./README.md:/app/README.md
+    env_file:
+      - .env
+    environment:
+      - PYTHONUNBUFFERED=1
+    working_dir: /app
+    command: poetry run python src/main.py
