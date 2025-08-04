@@ -50,7 +50,7 @@ class LLM:
         INGREDIENT MODIFIERS  
         - Sauces are treated as optional modifiers for combos and fries - modifiers_to_add.
         - If the user modifies only part of a multi-quantity item (e.g., "remove onion from 2 of 5 burgers"), split into two separate OrderItems with respective quantities and modifiers.
-        - If 'Flag: Combo was offered' is in modifiers_to_add of a burger, keep it there and do not remove it.
+        - If 'Flag' is in modifiers_to_add of a burger, keep it there and do not remove it.
 
         SIZE
         - Size applies only to 'fries', 'drinks' and 'combos' types.
@@ -67,7 +67,7 @@ class LLM:
         - User may add a sauce to a combo. It is optional and should be added to the modifiers_to_add.
         - If the user lists drink/fries/sauce ingredient separately and they logically match a combo, assign them as children of the combo.
         - For modifiers (e.g., "no ice", "add Ranch"), assign them to the correct nested item.
-        - If 'Sauce was offered' is in modifiers_to_remove, keep it there and do not remove it. 
+        - If 'Flag' is in modifiers_to_remove, keep it there and do not remove it. 
         - User may specify multiple sub items in the same message
 
         DEALS  

@@ -71,7 +71,7 @@ class OrderItem(BaseModel):
     modifiers_to_remove: List[IngredientsItem] = Field(
         default_factory=list,
         description="""Modifications of the item from the menu to remove from default_ingredients.
-        If not applicable: []. Example: 'Onion', 'Pickles' for 'burgers', 'Ice' for drinks or 'Flag: Sauce was offered' for combo. Do not add 'Flag: Sauce was offered' by yourself, but if present do not remove it."""
+        If not applicable: []. Example: 'Onion', 'Pickles' for 'burgers', 'Ice' for drinks or 'Flag' for combo. Do not add 'Flag' by yourself, but if present do not remove it."""
     )
     children: Optional[List["ChildrenItem"]] = Field(
         None,
@@ -121,25 +121,25 @@ class Order():
         for item in self.list:
             res += f"  - {item.quantity} x {item.name} {item.size} [{item.type}]\n"
             if item.modifiers_to_add:
-                adds = [f"{mod.quantity}x{mod.name}" for mod in item.modifiers_to_add if mod.name not in [
-                    'Flag: Combo was offered', 'Flag: Sauce was offered']]
+                adds = [f"{mod.quantity}x{mod.name}" for mod in item.modifiers_to_add if mod.name != 
+                    'Flag']
                 if adds:
                     res += f"      Modifiers to add: {adds}\n"
             if item.modifiers_to_remove:
                 removes = [
-                    f"{mod.quantity}x{mod.name}" for mod in item.modifiers_to_remove if mod.name not in [
-                        'Flag: Combo was offered', 'Flag: Sauce was offered']]
+                    f"{mod.quantity}x{mod.name}" for mod in item.modifiers_to_remove if mod.name !=
+                        'Flag']
                 if removes:
                     res += f"      Modifiers to remove: {removes}\n"
             if item.children:
                 res += "      With:\n"
                 for child in item.children:
                     adds = [
-                        f"{mod.quantity}x{mod.name}" for mod in child.modifiers_to_add if mod.name not in [
-                            'Flag: Combo was offered', 'Flag: Sauce was offered']]
+                        f"{mod.quantity}x{mod.name}" for mod in child.modifiers_to_add if mod.name !=
+                            'Flag']
                     removes = [
-                        f"{mod.name}" for mod in child.modifiers_to_remove if mod.name not in [
-                            'Flag: Combo was offered', 'Flag: Sauce was offered']]
+                        f"{mod.name}" for mod in child.modifiers_to_remove if mod.name !=
+                            'Flag']
                     res += f"        * [{child.type}]: {child.name}, add:{adds}, remove: {removes}\n"
         res += "==================\n"
         return res
@@ -156,7 +156,7 @@ class Order():
                 total += item.quantity * \
                     self.menu.menu["combos"][item.name]["size_price"][item.size]
                 for mod in item.modifiers_to_add:
-                    if mod.name != "Flag: Sauce was offered":
+                    if mod.name != "Flag":
                         total += self.menu.menu["sauces"][mod.name]
                 for child in item.children:
                     for mod in child.modifiers_to_add:

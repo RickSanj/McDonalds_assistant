@@ -25,13 +25,13 @@ def main():
             user_msg = input("User: ")
 
             llm_response = llm.process(user_msg, manager_msg, order)
-            print(llm_response)
+            # print(llm_response)
 
             manager.update_order(order, llm_response)
             manager.validate(order, menu)
 
             print(colored(manager.get_errors(), 'red'))
-            print(order.summary())
+            # print(order.summary())
 
             handle_issues(manager, llm, order, menu)
 
@@ -55,12 +55,12 @@ def handle_issues(manager: Manager, llm: LLM, order: Order, menu: Menu):
         user_msg = input("User: ")
 
         llm_response = llm.process(user_msg, manager_msg, order)
-        print(llm_response)
+        # print(llm_response)
 
         manager.update_order(order, llm_response)
         manager.validate(order, menu)
 
-        print(order.summary())
+        # print(order.summary())
         print(colored(manager.get_errors(), 'red'))
 
 if __name__ == "__main__":

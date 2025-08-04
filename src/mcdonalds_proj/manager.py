@@ -86,16 +86,16 @@ class Manager:
                 # Flag meaning that no sauce was offered
                 if len(item.modifiers_to_add) < 1:
                     self.offer_sause(item)
-                    item.modifiers_to_add.append('Flag: Sauce was offered')
+                    item.modifiers_to_add.append('Flag')
                     return
 
             if item.type == 'burgers':
                 burger_count += 1
                 # If the user has ordered a burger, offer to turn it into a combo, for every burger ordered.
                 if item.name not in ["Big Tasty", 'Hamburger', 'Royal Cheeseburger']:
-                    if "Flag: Combo was offered" not in [mod.name for mod in item.modifiers_to_add]:     
+                    if "Flag" not in [mod.name for mod in item.modifiers_to_add]:     
                         self.offer_to_turn_into_combo(item)
-                        item.modifiers_to_add.append(IngredientsItem(name='Flag: Combo was offered'))
+                        item.modifiers_to_add.append(IngredientsItem(name='Flag'))
                         return
                 if item.name in menu.menu['deals']['Small Double Deal']:
                     small_burger_count += item.quantity
@@ -441,7 +441,7 @@ class Manager:
         elif item.type == 'combos':
             for mod in item.modifiers_to_add:
                 possible_ingredients = list(menu.menu['sauces'])
-                if mod.name not in possible_ingredients and mod.name != "Flag: Sauce was offered":
+                if mod.name not in possible_ingredients and mod.name != "Flag":
                     self.errors.append(
                         f"You cannot add {mod.name} for {item.name}. '{mod.name}' was removed.")
                     item.modifiers_to_add.remove(mod)
@@ -452,7 +452,7 @@ class Manager:
             default_ingredients = menu.menu[item.type][item.name]['default_ingredients']
 
             for mod in item.modifiers_to_add:
-                if mod.name not in possible_ingredients and mod.name != 'Flag: Combo was offered':
+                if mod.name not in possible_ingredients and mod.name != 'Flag':
                     self.errors.append(
                         f"You cannot add {mod.name} for {item.name}. '{mod}' was removed.")
                     item.modifiers_to_add.remove(mod)

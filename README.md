@@ -16,7 +16,7 @@ docker-compose run --rm --service-ports mcdonalds-app
 ```
 
 
-I would like one McChicken burger without Mayo, and Apple Juice
+I would like one McChicken burger without Mayo and Apple Juice
 
 The smallest you have 
 
